@@ -1,0 +1,121 @@
+---
+title: "R을 이용하여 HTML 보고서를 본문에 삽입하여 메일 보내기"
+author: "eunkwang"
+date: '2017 8 16 '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R에서 인라인으로 메일 보내기
+
+R에서 인라인으로 이메일을 보내기 위해서는 mailR이라는 패키지를 설치해야 함    
+sendmailR이라는 패키지도 있지만 메일 본문에 html을 삽입하여 메일을 발송하는 것은 지원하지 않음    
+따라서 mailR을 기준으로 진행함
+
+### 처리 환경
+
+윈도우와 리눅스는 메일 본문에 대한 처리 환경의 차이가 있으며 윈도우의 경우 코드상 추가로 처리해야 하는 부분이 있음
+
+
+### 패키지의 설치
+
+다음과 같이 실행하여 패키지를 설치함
+
+```{r install_load_library}
+
+library(rJava)
+
+install.packages("rJava")
+
+
+install.packages("devtools", dep = T)
+library(devtools)
+install_github("rpremraj/mailR")
+
+
+install.packages("mailR", dep = T)
+library(mailR)
+
+```
+
+
+### 메일 본문에 삽입할 Rmarkdown 파일의 생성
+
+코드 첫머리에 다음과 같이 HTML 렌더링 옵션이 반드시 포함되어야 함   
+
+```{html}
+---
+title: "테스트"
+output: 
+  html_document: 
+    self_contained: no
+---
+```
+
+
+
+
+### 메일 보내기(리눅스의 경우)
+
+```{r sendemailonlinux}
+
+library(mailR)
+library(rmarkdown)
+
+from <- '보내는사람메일주소'
+to <- '받는사람메일주소'
+subject <- '메일제목'
+
+render("htmlSample.Rmd", encoding = "UTF-8")
+
+subject <- '이메일한글테스트'
+body <- 'htmlSample.html'
+
+send.mail(from=from,
+          to = to,
+          subject = subject,
+          body = body,
+          html = TRUE,
+          inline = TRUE,
+          smtp = list(host.name = "192.168.0.xx", port = 25),
+          authenticate = FALSE,
+          encoding = "utf-8")
+```
+
+
+
+### 메일 보내기(윈도우의 경우)
+
+```{r sendemailonwindows}
+
+library(mailR)
+library(rmarkdown)
+
+from <- '보내는사람메일주소'
+to <- '받는사람메일주소'
+subject <- '메일제목'
+
+render('htmlSample.Rmd', encoding = 'utf-8')
+
+subject <- '이메일한글테스트'
+body <- 'htmlSample.html'
+
+# 윈도우의 경우 html 파일을 다음과 같이 인코딩해서 다시 저장해야 함
+html <- readLines("htmlSample.html", encoding = "UTF-8")
+write(html, 'htmlSampleTemp.html')
+body <- 'htmlSampleTemp.html'
+
+send.mail(from=from,
+          to = to,
+          subject = subject,
+          body = body,
+          html = TRUE,
+          inline = TRUE,
+          smtp = list(host.name = "192.168.0.xx", port = 25),
+          authenticate = FALSE,
+          encoding = 'utf-8')
+```
+
