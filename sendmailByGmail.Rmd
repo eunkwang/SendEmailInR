@@ -1,0 +1,56 @@
+---
+title: "지메일을 이용하여 이메일 보내기"
+author: "eunkwang"
+date: "2017년 8월 25일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 사전 준비 작업
+
+구글 지메일을 이용하여 메일을 발송하기 위해서는 다음의 과정을 우선 전행해야 함
+구글 로그인이 된 상태에서 아래 페이지에 방문하여 "보안 수준이 낮은 앱 허용: 사용" 으로 옵션을 켜주어야 함
+
+https://myaccount.google.com/lesssecureapps
+
+
+## 진행 참고 사항
+
+html을 인라인으로 보내는 경우 구글의 보안 정책상 발송이 차단되는데 이는 아직 해결하지 못했음
+
+
+## 메일 보내기
+
+아래와 같이 코드를 수정하여 메일을 발송할 수 있음
+
+```{r}
+library(mailR)
+library(rmarkdown)
+
+from <- '발신인메일주소'
+to <- '수신인메일주소'
+
+subject <- '이메일한글테스트'
+
+body <- '안녕하세요 메일 테스트 합니다.'
+
+send.mail(from=from,
+          to = to,
+          subject = subject,
+          body = body,
+          html = TRUE,
+          inline = TRUE,
+          smtp = list(host.name = "smtp.gmail.com"
+                      , port = 465
+                      , user.name = "계정명@gmail.com"
+                      , passwd = "패스워드"
+                      , ssl = TRUE),
+          send = TRUE,
+          authenticate = TRUE,
+          encoding = "utf-8")
+
+```
+
