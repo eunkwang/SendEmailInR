@@ -41,8 +41,8 @@ send.mail(from=from,
           to = to,
           subject = subject,
           body = body,
-          html = TRUE,
-          inline = TRUE,
+          html = FALSE,
+          inline = FALSE,
           smtp = list(host.name = "smtp.gmail.com"
                       , port = 465
                       , user.name = "계정명@gmail.com"
