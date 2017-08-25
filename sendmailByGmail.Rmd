@@ -54,3 +54,41 @@ send.mail(from=from,
 
 ```
 
+
+## 파일 첨부하여 보내기
+
+단 아래와 같이 html 파일을 첨부하여 보낼 수 있음.
+
+```{r}
+
+library(mailR)
+library(rmarkdown)
+
+render("htmlSample.Rmd", encoding = "UTF-8")
+
+from <- '발신인메일주소'
+to <- '수신인메일주소'
+
+subject <- '이메일한글테스트'
+
+body <- '안녕하세요 메일 테스트 합니다.'
+
+send.mail(from=from,
+          to = to,
+          subject = subject,
+          body = body,
+          html = FALSE,
+          inline = FALSE,
+          smtp = list(host.name = "smtp.gmail.com"
+                      , port = 465
+                      , user.name = "계정명@gmail.com"
+                      , passwd = "패스워드"
+                      , ssl = TRUE),
+          send = TRUE,
+          authenticate = TRUE,
+          encoding = "utf-8",
+          attach.files = c("./htmlSample.html")
+)
+
+```
+
